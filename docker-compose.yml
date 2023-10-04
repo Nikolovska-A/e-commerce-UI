@@ -1,0 +1,39 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=ecommerce
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5      
+    container_name: postgres
+  ecommerce:
+    image: e-commerce:1.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["sh", "-c", "java -jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 ecommerce.jar"]
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/ecommerce
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=ecommerce
+    depends_on:
+      postgres:
+        condition: service_healthy
+    container_name: e-commerce-api
+  
