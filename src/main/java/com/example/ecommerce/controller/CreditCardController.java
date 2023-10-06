@@ -35,7 +35,6 @@ public class CreditCardController {
             if (!creditCardService.isValidCreditCard(creditCard)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Invalid credit card information"));
             }
-//            creditCardService.save(creditCard); //TODO save only if user requests
             return ResponseEntity.ok(new MessageResponse("Success!"));
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Something went wrong!"));

@@ -12,6 +12,6 @@ public class CreditCardRequest {
      public String holderName;
      public String cardNumber;
      public String expiryYear;
-     public String ExpiryMonth;
+     public String expiryMonth;
      public String cvv;
 }
